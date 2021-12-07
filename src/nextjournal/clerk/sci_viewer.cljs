@@ -543,6 +543,32 @@
                   [:button.rounded.bg-blue-500.text-white.py-2.px-4.font-bold.mr-2 {:on-click #(swap! c inc)} "increment"]
                   [:button.rounded.bg-blue-500.text-white.py-2.px-4.font-bold {:on-click #(swap! c dec)} "decrement"]])))])
 
+(defn segmented-control [segments]
+  (into
+    [:div.flex.items-center]
+    (let [last-index (dec (count segments))]
+      (map-indexed
+        (fn [i {:as segment :keys [active? label on-click]}]
+          [:button.border-t.border-b.border-l.border-gray-400.leading-none.shadow.hover:bg-gray-100.active:bg-gray-200.font-medium
+           (merge
+             {:class (concat
+                       ["px-3" "py-1" "text-xs"]
+                       (when (zero? i) ["rounded-l-md"])
+                       (when (= i last-index) ["rounded-r-md" "border-r"])
+                       (when active? ["bg-indigo-600" "hover:bg-indigo-700" "active:bg-indigo-800" "text-white" "border-indigo-700"]))}
+             segment)
+           label])
+        segments))))
+
+(dc/defcard viewer-multi
+  [:div.viewer
+   [:div.mb-3
+    [segmented-control
+     [{:active? true :label "LaTeX"}
+      {:label "Data"}
+      {:label "Raw"}]]]
+   [inspect (tex "G_{\\mu\\nu}\\equiv R_{\\mu\\nu} - {\\textstyle 1 \\over 2}R\\,g_{\\mu\\nu} = {8 \\pi G \\over c^4} T_{\\mu\\nu}")]])
+
 ;; TODO add svg viewer
 
 (dc/defcard progress-bar
