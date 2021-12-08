@@ -88,7 +88,7 @@
               ;; TODO better report this error, anything that can't be read shouldn't be cached in the first place
               #_(prn :thaw-error e)
               nil)))
-        (let [{:keys [result]} (time-ms (eval form))
+        (let [{:keys [result]} (time-ms (binding [config/*in-clerk* true] (eval form)))
               var-value (cond-> result (var? result) deref)
               no-cache? (or no-cache?
                             (config/cache-disabled?)
